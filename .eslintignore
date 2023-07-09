@@ -7,3 +7,4 @@ reset.d.ts
 **/node_modules
 prisma
 test
+integrity.cjs
