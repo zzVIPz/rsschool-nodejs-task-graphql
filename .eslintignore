@@ -1,0 +1,9 @@
+.eslintrc.cjs
+reset.d.ts
+**/.git
+**/.svn
+**/.hg
+**/dist
+**/node_modules
+prisma
+test

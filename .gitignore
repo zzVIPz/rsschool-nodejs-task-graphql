@@ -46,7 +46,6 @@ jspm_packages
 .idea
 
 # vscode
-.vscode
 *code-workspace
 
 # clinic
@@ -59,3 +58,8 @@ test/types/index.js
 
 # compiled app
 dist
+
+.env
+
+database.db
+database.db-journal
