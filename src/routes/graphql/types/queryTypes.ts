@@ -29,6 +29,7 @@ export const PostsType = new GraphQLObjectType({
     content: { type: GraphQLString },
   },
 });
+
 export const ProfilesType = new GraphQLObjectType({
   name: 'ProfilesType',
   fields: {
@@ -47,9 +48,9 @@ export const ProfilesType = new GraphQLObjectType({
 
 export const UsersType = new GraphQLObjectType({
   name: 'UsersType',
-  fields: {
+  fields: () => ({
     id: { type: UUIDType },
-    name: { type: GraphQLInt },
+    name: { type: GraphQLString },
     balance: { type: GraphQLFloat },
     profile: {
       type: ProfilesType,
@@ -61,5 +62,25 @@ export const UsersType = new GraphQLObjectType({
       resolve: async ({ id }: User, _args, { prisma }: IPrismaContext) =>
         await prisma.post.findMany({ where: { authorId: id } }),
     },
-  },
+    userSubscribedTo: {
+      type: new GraphQLList(UsersType),
+      resolve: async ({ id }: User, _args, { prisma }: IPrismaContext) =>
+        await prisma.subscribersOnAuthors
+          .findMany({
+            where: { subscriberId: id },
+            include: { author: true },
+          })
+          .then((data) => data.map(({ author }) => author)),
+    },
+    subscribedToUser: {
+      type: new GraphQLList(UsersType),
+      resolve: async ({ id }: User, _args, { prisma }: IPrismaContext) =>
+        await prisma.subscribersOnAuthors
+          .findMany({
+            where: { authorId: id },
+            include: { subscriber: true },
+          })
+          .then((data) => data.map(({ subscriber }) => subscriber)),
+    },
+  }),
 });
