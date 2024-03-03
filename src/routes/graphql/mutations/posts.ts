@@ -1,7 +1,7 @@
 import { Post, Prisma } from '@prisma/client';
 import { ICreateResources, IPrismaContext } from '../types/generalTypes.js';
 import { PostsType } from '../queries/queryTypes.js';
-import { CreatePostInputType } from './inputTypes.js';
+import { CreatePostInputType, ChangePostInputType } from './inputTypes.js';
 import { UUIDType } from '../types/uuid.js';
 
 export default {
@@ -25,5 +25,18 @@ export default {
 
       return id;
     },
+  },
+
+  changePost: {
+    type: PostsType,
+    args: {
+      id: { type: UUIDType },
+      dto: { type: ChangePostInputType },
+    },
+    resolve: async (
+      _obj,
+      { id, dto }: ICreateResources<Prisma.PostUpdateInput>,
+      { prisma }: IPrismaContext,
+    ) => await prisma.post.update({ where: { id }, data: dto }),
   },
 };

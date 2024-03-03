@@ -1,7 +1,7 @@
 import { Prisma, Profile } from '@prisma/client';
 import { ICreateResources, IPrismaContext } from '../types/generalTypes.js';
 import { ProfilesType } from '../queries/queryTypes.js';
-import { CreateProfileInputType } from './inputTypes.js';
+import { CreateProfileInputType, ChangeProfileInputType } from './inputTypes.js';
 import { UUIDType } from '../types/uuid.js';
 
 export default {
@@ -25,5 +25,18 @@ export default {
 
       return id;
     },
+  },
+
+  changeProfile: {
+    type: ProfilesType,
+    args: {
+      id: { type: UUIDType },
+      dto: { type: ChangeProfileInputType },
+    },
+    resolve: async (
+      _obj,
+      { id, dto }: ICreateResources<Prisma.ProfileUpdateInput>,
+      { prisma }: IPrismaContext,
+    ) => await prisma.profile.update({ where: { id }, data: dto }),
   },
 };

@@ -5,5 +5,6 @@ export interface IPrismaContext {
 }
 
 export interface ICreateResources<T> {
+  id?: string;
   dto: T;
 }

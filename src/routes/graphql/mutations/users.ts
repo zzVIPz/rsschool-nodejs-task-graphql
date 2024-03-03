@@ -1,7 +1,7 @@
 import { Prisma, User } from '@prisma/client';
 import { ICreateResources, IPrismaContext } from '../types/generalTypes.js';
 import { UsersType } from '../queries/queryTypes.js';
-import { CreateUserInputType } from './inputTypes.js';
+import { ChangeUserInputType, CreateUserInputType } from './inputTypes.js';
 import { UUIDType } from '../types/uuid.js';
 
 export default {
@@ -25,5 +25,18 @@ export default {
 
       return id;
     },
+  },
+
+  changeUser: {
+    type: UsersType,
+    args: {
+      id: { type: UUIDType },
+      dto: { type: ChangeUserInputType },
+    },
+    resolve: async (
+      _obj,
+      { id, dto }: ICreateResources<Prisma.UserUpdateInput>,
+      { prisma }: IPrismaContext,
+    ) => await prisma.user.update({ where: { id }, data: dto }),
   },
 };
