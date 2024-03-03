@@ -6,9 +6,9 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql';
-import { MemberTypeEnum } from './enums.js';
-import { UUIDType } from './uuid.js';
-import { IPrismaContext } from './generalTypes.js';
+import { MemberTypeEnum } from '../types/enums.js';
+import { UUIDType } from '../types/uuid.js';
+import { IPrismaContext } from '../types/generalTypes.js';
 import { Profile, User } from '@prisma/client';
 
 export const MembersType = new GraphQLObjectType({
@@ -46,7 +46,7 @@ export const ProfilesType = new GraphQLObjectType({
   },
 });
 
-export const UsersType = new GraphQLObjectType({
+export const UsersType: GraphQLObjectType<User, IPrismaContext> = new GraphQLObjectType({
   name: 'UsersType',
   fields: () => ({
     id: { type: UUIDType },
