@@ -5,10 +5,6 @@ export interface IPrismaContext {
   prisma: PrismaClient;
 }
 
-export interface IUUID {
-  id: string;
-}
 export interface IMemberTypeId {
   id: MemberTypeId;
 }
-

@@ -1,9 +1,10 @@
 import { Type } from '@fastify/type-provider-typebox';
 import { GraphQLList, GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { MembersType, PostsType, ProfilesType, UsersType } from './types/queryTypes.js';
-import { IMemberTypeId, IPrismaContext, IUUID } from './types/generalTypes.js';
+import { IMemberTypeId, IPrismaContext } from './types/generalTypes.js';
 import { UUIDType } from './types/uuid.js';
 import { MemberTypeEnum } from './types/enums.js';
+import { User } from '@prisma/client';
 
 export const gqlResponseSchema = Type.Partial(
   Type.Object({
@@ -50,7 +51,7 @@ export const graphQLSchema = new GraphQLSchema({
         args: {
           id: { type: UUIDType },
         },
-        resolve: (_obj, { id }: IUUID, { prisma }: IPrismaContext) =>
+        resolve: (_obj, { id }: User, { prisma }: IPrismaContext) =>
           prisma.post.findUnique({ where: { id } }),
       },
       users: {
@@ -62,7 +63,7 @@ export const graphQLSchema = new GraphQLSchema({
         args: {
           id: { type: UUIDType },
         },
-        resolve: (_obj, { id }: IUUID, { prisma }: IPrismaContext) =>
+        resolve: (_obj, { id }: User, { prisma }: IPrismaContext) =>
           prisma.user.findUnique({ where: { id } }),
       },
       profiles: {
@@ -74,7 +75,7 @@ export const graphQLSchema = new GraphQLSchema({
         args: {
           id: { type: UUIDType },
         },
-        resolve: (_obj, { id }: IUUID, { prisma }: IPrismaContext) =>
+        resolve: (_obj, { id }: User, { prisma }: IPrismaContext) =>
           prisma.profile.findUnique({ where: { id } }),
       },
     },
