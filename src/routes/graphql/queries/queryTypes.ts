@@ -40,8 +40,8 @@ export const ProfilesType = new GraphQLObjectType({
     memberTypeId: { type: MembersType },
     memberType: {
       type: MembersType,
-      resolve: async ({ memberTypeId }: Profile, _args, { prisma }: IPrismaContext) =>
-        await prisma.memberType.findUnique({ where: { id: memberTypeId } }),
+      resolve: async ({ memberTypeId }: Profile, _args, { loaders }: IPrismaContext) =>
+        await loaders?.members.load(memberTypeId),
     },
   },
 });
@@ -54,33 +54,24 @@ export const UsersType: GraphQLObjectType<User, IPrismaContext> = new GraphQLObj
     balance: { type: GraphQLFloat },
     profile: {
       type: ProfilesType,
-      resolve: async ({ id }: User, _args, { prisma }: IPrismaContext) =>
-        await prisma.profile.findUnique({ where: { userId: id } }),
+      resolve: async ({ id }: User, _args, { loaders }: IPrismaContext) =>
+        await loaders?.profiles.load(id),
     },
     posts: {
       type: new GraphQLList(PostsType),
-      resolve: async ({ id }: User, _args, { prisma }: IPrismaContext) =>
-        await prisma.post.findMany({ where: { authorId: id } }),
+      resolve: async ({ id }: User, _args, { loaders }: IPrismaContext) =>
+        await loaders?.posts.load(id),
     },
     userSubscribedTo: {
       type: new GraphQLList(UsersType),
-      resolve: async ({ id }: User, _args, { prisma }: IPrismaContext) =>
-        await prisma.subscribersOnAuthors
-          .findMany({
-            where: { subscriberId: id },
-            include: { author: true },
-          })
-          .then((data) => data.map(({ author }) => author)),
+      resolve: async ({ id }: User, _args, { loaders }: IPrismaContext) =>
+        await loaders?.userSubscribedTo.load(id),
     },
+
     subscribedToUser: {
       type: new GraphQLList(UsersType),
-      resolve: async ({ id }: User, _args, { prisma }: IPrismaContext) =>
-        await prisma.subscribersOnAuthors
-          .findMany({
-            where: { authorId: id },
-            include: { subscriber: true },
-          })
-          .then((data) => data.map(({ subscriber }) => subscriber)),
+      resolve: async ({ id }: User, _args, { loaders }: IPrismaContext) =>
+        await loaders?.subscribedToUser.load(id),
     },
   }),
 });

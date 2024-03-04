@@ -1,7 +1,16 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { graphql, parse, validate } from 'graphql';
+import DataLoader from 'dataloader';
 import depthLimit from 'graphql-depth-limit';
 import { createGqlResponseSchema, gqlResponseSchema, graphQLSchema } from './schemas.js';
+import {
+  batchMembers,
+  batchPosts,
+  batchProfiles,
+  batchSubscribedToUser,
+  batchUserSubscribedTo,
+  batchUsers,
+} from './dataLoaders/dataLoaders.js';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
@@ -30,7 +39,17 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
       return graphql({
         schema: graphQLSchema,
         source: query,
-        contextValue: { prisma },
+        contextValue: {
+          prisma,
+          loaders: {
+            users: new DataLoader(batchUsers(prisma)),
+            profiles: new DataLoader(batchProfiles(prisma)),
+            posts: new DataLoader(batchPosts(prisma)),
+            members: new DataLoader(batchMembers(prisma)),
+            userSubscribedTo: new DataLoader(batchUserSubscribedTo(prisma)),
+            subscribedToUser: new DataLoader(batchSubscribedToUser(prisma)),
+          },
+        },
         variableValues: variables,
       })
         .then((result) => result)
